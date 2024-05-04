@@ -72,6 +72,7 @@ isu Title of the issue -b Body of the issue -l bug enhancement -c In Progress
 ```
 
 ## Limitations
+- does not check if the user is on "main" or "dev" branch before creating a new branch.
 - isu assumes labels to not have spaces in their names.
 - newlines in the title and in the body are not supported.
 - labels and columns are case-sensitive - if specified, they must match the exact name in the repository, otherwise, the script will fail.

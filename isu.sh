@@ -4,7 +4,7 @@
 isu() {
     if [[ -n $COMP_LINE ]]; then
         # if COMP_LINE is only isu  and space then show title
-        if [[ "$COMP_LINE" == "isu" ]]; then
+        if [[ "$COMP_LINE" == "isu " ]]; then
             echo '--title'
             exit
         fi
@@ -29,7 +29,7 @@ isu() {
         exit
     fi
     show_help() {
-        echo "isu - Create a new issue on github"
+        echo "isu"
         echo "Creates a new issue on github"
         echo "The new issue will be created in the current directory's git repo and added to the most recent project connected to the repo"
         echo ""
@@ -53,6 +53,7 @@ isu() {
 
     if [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
         show_help
+        return 0
     fi
     rest_of_input="$@"
     mk_branch=true
