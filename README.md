@@ -17,7 +17,7 @@ The script interacts with the GitHub API using the `gh` command-line tool, makin
 ## Prerequisites
 
 - [GitHub CLI (gh)](https://cli.github.com/)
-- Bash shell
+- Bash shell version 4 or higher
 
 
 ## Installation
@@ -74,7 +74,8 @@ isu Title of the issue -b Body of the issue -l bug enhancement -c In Progress
 ## Limitations
 - does not check if the user is on "main" or "dev" branch before creating a new branch.
 - isu assumes labels to not have spaces in their names.
-- newlines in the title and in the body are not supported.
+- newlines in the title are not supported.
+- if the body is multi-line, it must be enclosed in quotes.
 - labels and columns are case-sensitive - if specified, they must match the exact name in the repository, otherwise, the script will fail.
 
 ## Contributing

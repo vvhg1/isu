@@ -62,48 +62,48 @@ isu() {
     msg_label=""
     msg_column=""
     no_story_points=0
-    # if args don't start with - then assume that everything is the title until the first - is found
+    # if args don't start with - then assume that everything is the title up to the first flag
     if [[ "$1" != -* ]]; then
         msg_title="$@"
-        msg_title=${msg_title%% -[^ ]*}
+        msg_title=$(echo "$msg_title" | sed -Ez 's/ (-t |-b |-l |-c |-n |-p |-h |--title |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
     fi
     for arg in "$@"; do
         case $arg in
         -t | --title)
             if [[ "$@" == *"--title "* ]]; then
                 msg_title=${rest_of_input#*--title }
-                msg_title=${msg_title%% -[^ ]*}
+                msg_title=$(echo "$msg_title" | sed -Ez 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *"-t "* ]]; then
                 msg_title=${rest_of_input#*-t }
-                msg_title=${msg_title%% -[^ ]*}
+                msg_title=$(echo "$msg_title" | sed -Ez 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -b | --body)
             if [[ "$@" == *" --body "* ]]; then
                 msg_body=${rest_of_input#* --body }
-                msg_body=${msg_body%% -[^ ]*}
+                msg_body=$(echo "$msg_body" | sed -Ez 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -b "* ]]; then
                 msg_body=${rest_of_input#* -b }
-                msg_body=${msg_body%% -[^ ]*}
+                msg_body=$(echo "$msg_body" | sed -Ez 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -l | --labels)
             if [[ "$@" == *" --labels "* ]]; then
                 msg_label=${rest_of_input#* --label }
-                msg_label=${msg_label%% -[^ ]*}
+                msg_label=$(echo "$msg_label" | sed -Ez 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -l "* ]]; then
                 msg_label=${rest_of_input#* -l }
                 #regex for any character that is not whitespace
-                msg_label=${msg_label%% -[^ ]*}
+                msg_label=$(echo "$msg_label" | sed -Ez 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -c | --column)
             if [[ "$@" == *" --column "* ]]; then
                 msg_column=${rest_of_input#* --column }
-                msg_column=${msg_column%% -[^ ]*}
+                msg_column=$(echo "$msg_column" | sed -Ez 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -c "* ]]; then
                 msg_column=${rest_of_input#* -c }
-                msg_column=${msg_column%% -[^ ]*}
+                msg_column=$(echo "$msg_column" | sed -Ez 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -n | --no-branch)
@@ -122,9 +122,11 @@ isu() {
             ;;
         -h | --help)
             show_help
+            return 0
             ;;
         -[^\s]*)
             show_help
+            return 0
             ;;
         esac
     done
@@ -183,7 +185,7 @@ isu() {
             command_string=$command_string" -l "\"$msg_label\"""
         fi
     fi
-    gh_response=$(eval $command_string)
+    gh_response=$(eval "$command_string")
 
     repo_id="$(gh api graphql -f ownerrepo="$gh_name" -f reponame="$repo_name" -f query='
     query($ownerrepo: String!, $reponame: String!) {
