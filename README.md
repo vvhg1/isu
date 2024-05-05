@@ -11,7 +11,7 @@ The script interacts with the GitHub API using the `gh` command-line tool, makin
 
 - Create a new GitHub issue with a title, body, labels, and column placement.
 - Automatically adds the new issue to the project connected to the repository.
-- Can create a new branch for the issue (if the issue is not placed in a backlog or done column).
+- Can create a new branch for the issue (if the issue is not placed in a backlog or done column) with the ticket number and title as the branch name. It also checks if the user has currently checked out "main" or "dev" branch and will prompt to switch to "dev" (takes precedence over "main" if both exist) or "main" branch before creating the new branch.
 - Support for specifying story points for agile project management.
 
 ## Prerequisites
@@ -69,11 +69,15 @@ isu Title of the issue -b Body of the issue
 
 # Create a new issue with a title, body, labels, and column placement
 isu Title of the issue -b Body of the issue -l bug enhancement -c In Progress
+
+# Multi line body
+isu Title of the issue -b "Body of the issue
+Line 2
+Line 3"
 ```
 
 ## Limitations
-- does not check if the user is on "main" or "dev" branch before creating a new branch.
-- isu assumes labels to not have spaces in their names.
+- isu assumes labels to not have spaces in their names (as it uses spaces to separate the labels).
 - newlines in the title are not supported.
 - if the body is multi-line, it must be enclosed in quotes.
 - labels and columns are case-sensitive - if specified, they must match the exact name in the repository, otherwise, the script will fail.

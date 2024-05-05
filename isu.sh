@@ -2,6 +2,31 @@
 
 # This script creates a new issue on GitHub
 isu() {
+    # check bash version is 4 or higher
+    if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
+        echo "This script requires bash version 4 or higher"
+        return 1
+    fi
+    check_yes_no_internal() {
+    while true; do
+        sleep 0.1
+        # check which shell is being used
+        if [ -n "$BASH_VERSION" ]; then
+            read -p "$1" yn
+        elif [ -n "$ZSH_VERSION" ]; then
+            vared -p "$1" -c yn
+        fi
+        # read -p "$1" yn
+        if [ "$yn" = "" ]; then
+            yn='Y'
+        fi
+        case "$yn" in
+        [Yy]) return 0 ;;
+        [Nn]) return 1 ;;
+        *) echo -n "Not a valid option. Please enter y or n: " ;;
+        esac
+    done
+}
     if [[ -n $COMP_LINE ]]; then
         # if COMP_LINE is only isu  and space then show title
         if [[ "$COMP_LINE" == "isu " ]]; then
@@ -252,12 +277,34 @@ isu() {
         # check if branch exists
         if [ $mk_branch == true ]; then
             if [ -z "$(git branch --list | grep " $branch_name"$)" ]; then
-                echo "mk_branch $mk_branch"
-                if check_yes_no "It's dangerous to go alone! Take a branch with you? [Y/n]: "; then
+                if check_yes_no_internal "It's dangerous to go alone! Take a branch with you? [Y/n]: "; then
+                    #make sure we are on main or dev
+                    #check if dev exists
+                    if [ -z "$(git branch --list | grep " dev$")" ]; then
+                        if [ "$(git branch --show-current)" != "main" ]; then
+                            if check_yes_no_internal "You are not on main, switch to main and pull before creating branch? [Y/n]: "; then
+                                git checkout main
+                                git pull
+                            elif ! check_yes_no_internal "Continue without switching to main? [Y/n]: "; then
+                                echo "Aborting"
+                                return 0
+                            fi
+                        fi
+                    else
+                        if [ "$(git branch --show-current)" != "dev" ]; then
+                            if check_yes_no_internal "You are not on dev, switch to dev and pull before creating branch? [Y/n]: "; then
+                                git checkout dev
+                                git pull
+                            elif ! check_yes_no_internal "Continue without switching to dev? [Y/n]: "; then
+                                echo "Aborting"
+                                return 0
+                            fi
+                        fi
+                    fi
                     git checkout -b $branch_name
                 fi
             elif [ "$(git branch --show-current)" != "$branch_name" ]; then
-                if check_yes_no "Switch to $branch_name? [Y/n]: "; then
+                if check_yes_no_internal "Switch to $branch_name? [Y/n]: "; then
                     git checkout $branch_name
                 fi
             fi
