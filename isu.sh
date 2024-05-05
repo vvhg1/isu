@@ -90,45 +90,52 @@ isu() {
     # if args don't start with - then assume that everything is the title up to the first flag
     if [[ "$1" != -* ]]; then
         msg_title="$@"
-        msg_title=$(echo "$msg_title" | sed -Ez 's/ (-t |-b |-l |-c |-n |-p |-h |--title |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
+        msg_title=$(echo "$msg_title" | awk 'NR==1')
+        msg_title=$(echo "$msg_title" | sed -E 's/ (-t |-b |-l |-c |-n |-p |-h |--title |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
     fi
     for arg in "$@"; do
         case $arg in
         -t | --title)
             if [[ "$@" == *"--title "* ]]; then
                 msg_title=${rest_of_input#*--title }
-                msg_title=$(echo "$msg_title" | sed -Ez 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_title=$(echo "$msg_title" | awk 'NR==1')
+                msg_title=$(echo "$msg_title" | sed -E 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *"-t "* ]]; then
                 msg_title=${rest_of_input#*-t }
-                msg_title=$(echo "$msg_title" | sed -Ez 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_title=$(echo "$msg_title" | awk 'NR==1')
+                msg_title=$(echo "$msg_title" | sed -E 's/ (-b |-l |-c |-n |-p |-h |--body |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -b | --body)
             if [[ "$@" == *" --body "* ]]; then
                 msg_body=${rest_of_input#* --body }
-                msg_body=$(echo "$msg_body" | sed -Ez 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_body=$(echo "$msg_body" | sed -E 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -b "* ]]; then
                 msg_body=${rest_of_input#* -b }
-                msg_body=$(echo "$msg_body" | sed -Ez 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_body=$(echo "$msg_body" | sed -E 's/ (-t |-l |-c |-n |-p |-h |--title |--labels |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -l | --labels)
             if [[ "$@" == *" --labels "* ]]; then
-                msg_label=${rest_of_input#* --label }
-                msg_label=$(echo "$msg_label" | sed -Ez 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_label=${rest_of_input#* --labels }
+                msg_label=$(echo "$msg_label" | awk 'NR==1')
+                msg_label=$(echo "$msg_label" | sed -E 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -l "* ]]; then
                 msg_label=${rest_of_input#* -l }
+                msg_label=$(echo "$msg_label" | awk 'NR==1')
                 #regex for any character that is not whitespace
-                msg_label=$(echo "$msg_label" | sed -Ez 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
+                msg_label=$(echo "$msg_label" | sed -E 's/ (-t |-b |-c |-n |-p |-h |--title |--body |--column |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -c | --column)
             if [[ "$@" == *" --column "* ]]; then
                 msg_column=${rest_of_input#* --column }
-                msg_column=$(echo "$msg_column" | sed -Ez 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
+                msg_column=$(echo "$msg_column" | awk 'NR==1')
+                msg_column=$(echo "$msg_column" | sed -E 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
             elif [[ "$@" == *" -c "* ]]; then
                 msg_column=${rest_of_input#* -c }
-                msg_column=$(echo "$msg_column" | sed -Ez 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
+                msg_column=$(echo "$msg_column" | awk 'NR==1')
+                msg_column=$(echo "$msg_column" | sed -E 's/ (-t |-b |-l |-n |-p |-h |--title |--body |--labels |--no-branch |--no-storypoints |--help).*//')
             fi
             ;;
         -n | --no-branch)
