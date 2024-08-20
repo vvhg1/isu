@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script creates a new issue on GitHub
-isu() {
+issueforgithub() {
     # check bash version is 4 or higher
     if [ "${BASH_VERSINFO[0]}" -lt 4 ]; then
         echo "This script requires bash version 4 or higher"
